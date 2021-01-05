@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuntu.dao.TeacherMapper">
+
+    <resultMap id="Teacher" type="teacher">
+        <id column="t_id" property="t_id"/>
+        <result column="t_name" property="t_name"/>
+        <result column="t_idcard" property="t_idcard"/>
+        <result column="t_birthday" property="t_birthday"/>
+        <result column="t_loginName" property="t_loginName"/>
+        <result column="t_pwd" property="t_pwd"/>
+        <result column="t_sex" property="t_sex"/>
+        <association property="sex" javaType="sex">
+            <id column="t_sex" property="s_id" />
+            <result column="s_sex" property="s_sex"/>
+        </association>
+    </resultMap>
+
+    <!--修改-->
+    <update id="updPro" parameterType="teacher">
+        update teacher
+        <set>
+            <if test="t_name!=null and t_name!=''">
+                t_name=#{t_name},
+            </if>
+            <if test="t_idcard!=null and t_idcard!=''">
+                t_idcard=#{t_idcard},
+            </if>
+            <if test="t_birthday!=null">
+                t_birthday=#{t_birthday},
+            </if>
+            <if test="t_loginName!=null and t_loginName!=''">
+                t_loginName=#{t_loginName},
+            </if>
+            <if test="t_pwd!=null and t_pwd!=''">
+                t_pwd=#{t_pwd},
+            </if>
+            <if test="t_sex!=null and t_sex!=''">
+                t_sex=#{t_sex}
+            </if>
+        </set>
+        where t_id=#{t_id}
+    </update>
+
+    <!--添加-->
+    <insert id="addPro" parameterType="teacher">
+        insert into Teacher(t_name,t_idcard,t_birthday,t_loginName,t_pwd,t_sex)value(#{t_name},#{t_idcard},#{t_birthday},#{t_loginName},#{t_pwd},#{t_sex})
+    </insert>
+    <!--分页-->
+    <select id="getCount" resultType="int">
+        select count(1) from teacher AS a INNER JOIN sex AS b ON a.t_sex=b.s_id;
+    </select>
+    <select id="getPageAll" parameterType="com.yuntu.util.PageUtil" resultMap="Teacher">
+        SELECT * FROM teacher AS a INNER JOIN sex AS b ON a.t_sex=b.s_id LIMIT ${(pageindex-1)*pagesize},#{pagesize}
+    </select>
+
+
+
+    <!--删除-->
+    <delete id="delPro" parameterType="int">
+        delete from teacher where t_id=#{t_id}
+    </delete>
+
+    <!--查单个-->
+    <select id="selPro" resultMap="Teacher">
+        select * from teacher where t_id=#{t_id}
+    </select>
+
+
+</mapper>
